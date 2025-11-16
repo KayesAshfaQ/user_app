@@ -6,11 +6,6 @@ class HiveKeys {
   // App Config keys
   static const String themeMode = 'theme_mode';
   static const String language = 'language';
-  static const String onboardingCompleted = 'onboarding_completed';
-
-  // User Settings keys
-  static const String defaultCurrency = 'default_currency';
-  static const String notificationsEnabled = 'notifications_enabled';
   static const String firstTimeUser = 'first_time_user';
 
   // Cache metadata keys

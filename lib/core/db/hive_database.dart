@@ -5,7 +5,6 @@ class HiveDatabase {
   // Box names
   static const String apiCacheBox = 'api_cache';
   static const String appConfigBox = 'app_config';
-  static const String userSettingsBox = 'user_settings';
 
   // Singleton pattern
   static final HiveDatabase _instance = HiveDatabase._internal();
@@ -23,7 +22,6 @@ class HiveDatabase {
     await Future.wait([
       Hive.openBox<dynamic>(apiCacheBox),
       Hive.openBox<dynamic>(appConfigBox),
-      Hive.openBox<dynamic>(userSettingsBox),
     ]);
   }
 
@@ -42,7 +40,6 @@ class HiveDatabase {
     await Future.wait([
       Hive.box(apiCacheBox).clear(),
       Hive.box(appConfigBox).clear(),
-      Hive.box(userSettingsBox).clear(),
     ]);
   }
 
