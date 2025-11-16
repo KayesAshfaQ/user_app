@@ -16,6 +16,7 @@ class ApiClient {
     dio.options.headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'x-api-key': 'reqres-free-v1',
     };
     dio.options.connectTimeout = const Duration(seconds: 30);
     dio.options.receiveTimeout = const Duration(seconds: 30);

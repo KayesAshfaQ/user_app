@@ -21,8 +21,8 @@ class HiveDatabase {
 
     // Open all required boxes
     await Future.wait([
-      Hive.openBox<Map<dynamic, dynamic>>(apiCacheBox),
-      Hive.openBox<Map<dynamic, dynamic>>(appConfigBox),
+      Hive.openBox<dynamic>(apiCacheBox),
+      Hive.openBox<dynamic>(appConfigBox),
       Hive.openBox<dynamic>(userSettingsBox),
     ]);
   }

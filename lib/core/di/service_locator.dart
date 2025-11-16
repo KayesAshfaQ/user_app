@@ -3,6 +3,15 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../features/user/data/datasources/user_local_data_source.dart';
+import '../../features/user/data/datasources/user_remote_data_source.dart';
+import '../../features/user/data/repositories/user_repository_impl.dart';
+import '../../features/user/domain/repositories/user_repository.dart';
+import '../../features/user/domain/usecases/get_user_by_id_usecase.dart';
+import '../../features/user/domain/usecases/get_users_usecase.dart';
+import '../../features/user/domain/usecases/search_users_usecase.dart';
+import '../../features/user/presentation/blocs/user_detail/user_detail_bloc.dart';
+import '../../features/user/presentation/blocs/user_list/user_list_bloc.dart';
 import '../api/api_client.dart';
 import '../db/hive_database.dart';
 import '../event/app_event_bus.dart';
@@ -36,38 +45,46 @@ Future<void> initServiceLocator() async {
 
   sl.registerLazySingleton<Dio>(() => dio);
   sl.registerLazySingleton<ApiClient>(
-      () => ApiClient(dio: sl(), baseUrl: 'https://yourapi.com/api'));
+      () => ApiClient(dio: sl(), baseUrl: 'https://reqres.in/api'));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
   sl.registerLazySingleton(() => Connectivity());
 
+  // ============ User Feature ============
+
   // Data sources
-  /* sl.registerLazySingleton<PurchaseDataSource>(
-    () => PurchaseLocalDataSourceImpl(purchaseDao: database.purchaseDao),
-  ); */
+  sl.registerLazySingleton<UserRemoteDataSource>(
+    () => UserRemoteDataSourceImpl(apiClient: sl()),
+  );
+  sl.registerLazySingleton<UserLocalDataSource>(
+    () => UserLocalDataSourceImpl(cacheService: sl()),
+  );
 
   // Repositories
-  /* sl.registerLazySingleton<PurchaseRepository>(
-    () => PurchaseRepositoryImpl(dataSource: sl()),
-  ); */
+  sl.registerLazySingleton<UserRepository>(
+    () => UserRepositoryImpl(
+      localDataSource: sl(),
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
 
   // Use cases
-  /* sl.registerLazySingleton(() => GetPurchaseListUsecase(sl())); */
+  sl.registerLazySingleton(() => GetUsersUsecase(sl()));
+  sl.registerLazySingleton(() => GetUserByIdUsecase(sl()));
+  sl.registerLazySingleton(() => SearchUsersUsecase());
 
-  // Services (for easy access across the app)
-  /* sl.registerLazySingleton(() => UserSettingsService(
-        getUserSettingsUsecase: sl(),
-        updateDefaultCurrencyUsecase: sl(),
-      )); */
-
-  // Blocs/Cubits
-  /* sl.registerFactory(() => PurchaseListBloc(
-        getAllPurchaseListUseCase: sl(),
-        addPurchaseListUsecase: sl(),
-        removePurchaseListUsecase: sl(),
-        updatePurchaseListUsecase: sl(),
-        eventBus: sl(),
-      )); */
+  // BLoCs
+  sl.registerFactory(
+    () => UserListBloc(
+      getUsersUsecase: sl(),
+      searchUsersUsecase: sl(),
+      eventBus: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => UserDetailBloc(getUserByIdUsecase: sl()),
+  );
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/user/presentation/pages/user_detail_page.dart';
+import '../../features/user/presentation/pages/user_list_page.dart';
+
 // Create keys for `root` & `section` navigator avoiding unnecessary rebuilds
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _sectionNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Application router configuration using go_router
 ///
@@ -13,115 +15,28 @@ class AppRouter {
   /// Creates the router configuration
   static GoRouter get router => _router;
 
-  static final _router = null;
-
-  /// Private router instance
-  /* static final _router = GoRouter(
+  static final _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: PurchaseListPage.routePath,
+    initialLocation: UserListPage.routePath,
     debugLogDiagnostics: true,
     routes: [
-      // Main stateful shell route for the bottom navigation
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) {
-          // Return the widget that implements the custom shell (e.g a BottomNavigationBar).
-          // The [StatefulNavigationShell] is passed to be able to navigate to other branches in a stateful way.
-          return Dashboard(navigationShell: navigationShell);
-        },
-        branches: [
-          // Purchase List Branch
-          StatefulShellBranch(
-            navigatorKey: _sectionNavigatorKey,
-            routes: [
-              // Main route for the Purchase List
-              GoRoute(
-                path: PurchaseListPage.routePath,
-                builder: (context, state) => const PurchaseListShell(),
-                routes: [
-                  // Route for Purchase List Editor
-                  GoRoute(
-                    path: '${PurchaseListEditorPage.routePath}/:purchaseListId',
-                    parentNavigatorKey: _rootNavigatorKey,
-                    builder: (context, state) {
-                      // Parse the ID as int for efficiency and type safety
-                      final purchaseListId = int.tryParse(
-                          state.pathParameters['purchaseListId'] ?? '');
-                      if (purchaseListId == null) {
-                        throw Exception(
-                            'Invalid Purchase List ID: $purchaseListId');
-                      }
-
-                      // log the purchaseListId for debugging
-                      log('Purchase List ID: $purchaseListId');
-
-                      return PurchaseListEditorPage.create(id: purchaseListId);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Catalog Branch
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: CatalogPage.routePath,
-                builder: (context, state) {
-                  return CatalogPage.create();
-                },
-              ),
-            ],
-          ),
-
-          // Category Branch
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: CategoryPage.routePath,
-                builder: (context, state) {
-                  return CategoryPage.create();
-                },
-              ),
-            ],
-          ),
-
-          // Schedule Branch
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: SchedulePage.routePath,
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: SchedulePage(),
-                ),
-                routes: [
-                  GoRoute(
-                    path: ':id',
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'];
-                      return Scaffold(
-                        body: Center(
-                          child: Text(
-                              'Schedule Detail Screen for ID: $id - Implement me'),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Settings Branch
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: SettingsPage.routePath,
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: SettingsPage(),
-                ),
-              ),
-            ],
+      // User List Route
+      GoRoute(
+        path: UserListPage.routePath,
+        builder: (context, state) => UserListPage.create(),
+        routes: [
+          // User Detail Route (nested under user list)
+          GoRoute(
+            path: ':id',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) {
+              final id = int.tryParse(state.pathParameters['id'] ?? '');
+              if (id == null) {
+                throw Exception(
+                    'Invalid User ID: ${state.pathParameters['id']}');
+              }
+              return UserDetailPage.create(id: id);
+            },
           ),
         ],
       ),
@@ -132,14 +47,4 @@ class AppRouter {
       ),
     ),
   );
-}
-
-/// A simple wrapper for the PurchaseListPage with BlocProvider
-class PurchaseListShell extends StatelessWidget {
-  const PurchaseListShell({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return PurchaseListPage.create();
-  } */
 }
