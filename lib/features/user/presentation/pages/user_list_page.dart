@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../blocs/user_list/user_list_bloc.dart';
@@ -9,7 +10,6 @@ import '../widgets/empty_state_widget.dart';
 import '../widgets/error_retry_widget.dart';
 import '../widgets/user_list_view.dart';
 import '../widgets/user_search_bar.dart';
-import 'user_detail_page.dart';
 
 /// User list page with search and pagination
 class UserListPage extends StatelessWidget {
@@ -85,13 +85,7 @@ class UserListPage extends StatelessWidget {
                           .add(const LoadMoreUsersEvent());
                     },
                     onUserTap: (user) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              UserDetailPage.create(id: user.id),
-                        ),
-                      );
+                      context.push('${UserListPage.routePath}/${user.id}');
                     },
                   );
                 }
